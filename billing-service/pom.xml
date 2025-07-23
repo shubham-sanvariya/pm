@@ -77,7 +77,6 @@
 
 	<build>
 		<extensions>
-			<!-- Ensure OS compatibility for protoc -->
 			<extension>
 				<groupId>kr.motd.maven</groupId>
 				<artifactId>os-maven-plugin</artifactId>
@@ -85,25 +84,26 @@
 			</extension>
 		</extensions>
 		<plugins>
-			<!-- Spring boot / maven  -->
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 
-			<!-- PROTO -->
 			<plugin>
 				<groupId>org.xolstice.maven.plugins</groupId>
 				<artifactId>protobuf-maven-plugin</artifactId>
 				<version>0.6.1</version>
 				<configuration>
+					<!-- Update grpc version to match your dependencies -->
 					<protocArtifact>com.google.protobuf:protoc:3.25.5:exe:${os.detected.classifier}</protocArtifact>
 					<pluginId>grpc-java</pluginId>
-					<pluginArtifact>
-						io.grpc:protoc-gen-grpc-java:1.68.1:exe:${os.detected.classifier}</pluginArtifact>
+					<pluginArtifact>io.grpc:protoc-gen-grpc-java:1.69.0:exe:${os.detected.classifier}</pluginArtifact>
+					<protoSourceRoot>${project.basedir}/src/main/proto</protoSourceRoot>
 				</configuration>
 				<executions>
 					<execution>
+						<id>protobuf-compile</id>
+						<phase>generate-sources</phase>
 						<goals>
 							<goal>compile</goal>
 							<goal>compile-custom</goal>
