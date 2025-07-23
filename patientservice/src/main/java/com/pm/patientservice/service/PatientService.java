@@ -3,6 +3,7 @@ package com.pm.patientservice.service;
 import java.util.List;
 import java.util.UUID;
 
+import com.pm.patientservice.grpc.BillingServiceGrpcClient;
 import org.springframework.stereotype.Service;
 
 import com.pm.patientservice.dto.PatientCreateDTO;
@@ -19,17 +20,20 @@ public class PatientService {
 
     private final PatientRepository patientRepository;
     private final PatientMapper patientMapper;
+    private final BillingServiceGrpcClient billingServiceGrpcClient;
 
-    public PatientService(PatientRepository patientRepository, PatientMapper patientMapper) {
+    public PatientService(PatientRepository patientRepository, PatientMapper patientMapper, BillingServiceGrpcClient billingServiceGrpcClient) {
         this.patientRepository = patientRepository;
         this.patientMapper = patientMapper;
+        this.billingServiceGrpcClient = billingServiceGrpcClient;
     }
+
 
     public List<PatientResponseDTO> getPatients() {
         return patientRepository
                 .findAll()
                 .stream()
-                .map(p -> patientMapper.toProductDto(p))
+                .map(patientMapper::toProductDto)
                 .toList();
     }
 
@@ -57,8 +61,11 @@ public class PatientService {
         }
 
         patient = patientMapper.toPatient(dto,patient);
+        Patient createdPatient =  patientRepository.save(patient);
 
-        return patientMapper.toProductDto(patientRepository.save(patient));
+        billingServiceGrpcClient.createBillingAccount(createdPatient.getId().toString(), createdPatient.getName(), createdPatient.getEmail());
+
+        return patientMapper.toProductDto(createdPatient);
     }
 
     public void deletePatient(UUID id){
