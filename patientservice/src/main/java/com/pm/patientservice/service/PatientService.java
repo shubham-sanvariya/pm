@@ -48,6 +48,10 @@ public class PatientService {
         Patient patient = patientMapper.toPatient(dto);
 
         patient = patientRepository.save(patient);
+
+        Patient createdPatient =  patientRepository.save(patient);
+
+        billingServiceGrpcClient.createBillingAccount(createdPatient.getId().toString(), createdPatient.getName(), createdPatient.getEmail());
         
         return patientMapper.toProductDto(patient);
     }
@@ -62,8 +66,6 @@ public class PatientService {
 
         patient = patientMapper.toPatient(dto,patient);
         Patient createdPatient =  patientRepository.save(patient);
-
-        billingServiceGrpcClient.createBillingAccount(createdPatient.getId().toString(), createdPatient.getName(), createdPatient.getEmail());
 
         return patientMapper.toProductDto(createdPatient);
     }
