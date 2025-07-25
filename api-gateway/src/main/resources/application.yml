@@ -9,16 +9,16 @@ spring:
         - id: patient-service-route
           uri: http://patient-service:4000
           predicates:
-            - path=/api/patients/**
+            - Path=/api/patients/**
           filters:
-          # what strip does it takes out the prefix after the port for :4000/api/patients 
+          # what strip does it take out the prefix after the port for :4000/api/patients
           # becomes /patients
-            - strip-prefix=1
+            - StripPrefix=1
 
         - id: api-docs-patient-route
           uri: http://patient-service:4000
           predicates:
-            - path=/api-docs/patients
+            - Path=/api-docs/patients
           filters:
-            - rewrite-path=/api-docs/patients,/v3/api-docs
+            - RewritePath=/api-docs/patients,/v3/api-docs
 
